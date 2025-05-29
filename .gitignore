@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/api/node_modules
 /.pnp
 .pnp.js
 
@@ -14,6 +15,8 @@
 # misc
 .DS_Store
 .env
+/api/.env
+.vscode
 
 npm-debug.log*
 yarn-debug.log*

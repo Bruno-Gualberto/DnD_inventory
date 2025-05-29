@@ -1,0 +1,17 @@
+# Test files
+test-proxy.js
+
+# Development files
+*.log
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db 
+
+.env
