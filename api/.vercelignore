@@ -15,3 +15,4 @@ test-proxy.js
 Thumbs.db 
 
 .env
+.vercel/

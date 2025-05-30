@@ -4,7 +4,7 @@ const axios = require("axios");
 require("dotenv").config();
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8001;
 
 app.use(cors());
 app.use(express.json());
@@ -15,13 +15,52 @@ const AIRTABLE_CONFIG = {
   TABLE_NAME: process.env.AIRTABLE_TABLE_NAME, // This will be set for each deployment
 };
 
-// Health check endpoint
+// API Key for authentication
+const API_KEY = process.env.API_KEY;
+
+// API Key authentication middleware
+const authenticateApiKey = (req, res, next) => {
+  const providedKey = req.headers["x-api-key"] || req.headers["X-API-Key"];
+
+  if (!API_KEY) {
+    console.error("❌ API_KEY environment variable not set");
+    return res.status(500).json({
+      success: false,
+      error: "Server configuration error",
+    });
+  }
+
+  if (!providedKey) {
+    console.log("❌ API request without API key");
+    return res.status(401).json({
+      success: false,
+      error: "No authorization provided",
+    });
+  }
+
+  if (providedKey !== API_KEY) {
+    console.log("❌ API request with invalid API key");
+    return res.status(401).json({
+      success: false,
+      error: "Not authorized",
+    });
+  }
+
+  console.log("✅ API key authenticated");
+  next();
+};
+
+// Apply API key authentication to all /api routes
+app.use("/api", authenticateApiKey);
+
+// Health check endpoint (public - no API key required)
 app.get("/health", (req, res) => {
   res.json({
     success: true,
     message: "D&D Inventory Proxy Server is running",
     timestamp: new Date().toISOString(),
     table: AIRTABLE_CONFIG.TABLE_NAME,
+    secured: !!API_KEY, // Indicates if API key protection is enabled
   });
 });
 
