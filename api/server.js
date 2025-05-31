@@ -64,7 +64,7 @@ app.get("/health", (req, res) => {
   });
 });
 
-// GET data
+// GET all items data from single table
 app.get("/api/data", async (req, res) => {
   try {
     const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.TABLE_NAME}`;
@@ -102,6 +102,42 @@ app.get("/api/data", async (req, res) => {
       return res.status(404).json({
         success: false,
         error: "Table not found",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error.response?.data?.error?.message || error.message,
+    });
+  }
+});
+
+// GET single item
+app.get("/api/data/:recordId", async (req, res) => {
+  try {
+    const { recordId } = req.params;
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.TABLE_NAME}/${recordId}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_CONFIG.ACCESS_TOKEN}`,
+      },
+    });
+
+    console.log(
+      `✅ GET request successful - Record: ${recordId} from ${AIRTABLE_CONFIG.TABLE_NAME}`
+    );
+    res.json({
+      success: true,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error(`❌ GET error:`, error.message);
+
+    if (error.response?.status === 404) {
+      return res.status(404).json({
+        success: false,
+        error: "Record not found",
       });
     }
 
