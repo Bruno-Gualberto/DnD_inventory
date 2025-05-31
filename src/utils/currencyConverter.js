@@ -11,7 +11,7 @@ const CURRENCY_TO_COPPER = {
 export const convertToCopper = (priceString) => {
   const separatedPrice = priceString.split("/");
   const pricesInCopper = separatedPrice.map((item) => {
-    const [value, currency] = item.trim().split(" ");
+    const [value, currency] = item.trim().toLowerCase().split(" ");
     const copperValue = Number(value) * CURRENCY_TO_COPPER[currency];
     return copperValue;
   });

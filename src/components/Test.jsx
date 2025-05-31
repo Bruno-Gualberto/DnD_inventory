@@ -7,19 +7,19 @@ export default function Test() {
   }, []);
 
   const loadData = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/api/data`,
-        {
-          headers: {
-            "X-API-Key": process.env.REACT_APP_API_KEY,
-          },
-        }
-      );
-      console.log(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+    // try {
+    //   const response = await axios.get(
+    //     `${process.env.REACT_APP_BASE_URL}/api/data`,
+    //     {
+    //       headers: {
+    //         "X-API-Key": process.env.REACT_APP_API_KEY,
+    //       },
+    //     }
+    //   );
+    //   console.log(response.data);
+    // } catch (error) {
+    //   console.error("Error fetching data:", error);
+    // }
   };
 
   const addContent = async () => {};
