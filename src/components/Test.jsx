@@ -7,29 +7,49 @@ export default function Test() {
   }, []);
 
   const loadData = async () => {
-    // try {
-    //   const response = await axios.get(
-    //     // `${process.env.REACT_APP_BASE_URL}/api/data`,
-    //     "http://localhost:8001/api/data",
-    //     {
-    //       headers: {
-    //         "X-API-Key": process.env.REACT_APP_API_KEY,
-    //       },
-    //     }
-    //   );
-    //   console.log(response.data);
-    // } catch (error) {
-    //   console.error("Error fetching data:", error);
-    // }
+    try {
+      const response = await axios.get(
+        // `${process.env.REACT_APP_BASE_URL}/api/character`,
+        "http://localhost:8001/api/character",
+        {
+          headers: {
+            "X-API-Key": process.env.REACT_APP_API_KEY,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
 
-  const addContent = async () => {};
+  const addContent = async (customId) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8001/api/character/add",
+        {
+          customId,
+          quantity: 1,
+        },
+        {
+          headers: {
+            "X-API-Key": process.env.REACT_APP_API_KEY,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const deleteContent = async () => {};
 
   return (
     <div>
       <p>Test 1</p>
+      <button onClick={() => addContent("VWLysz6TVKWC")}>Add Content</button>
     </div>
   );
 }
