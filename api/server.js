@@ -12,7 +12,9 @@ app.use(express.json());
 const AIRTABLE_CONFIG = {
   BASE_ID: process.env.AIRTABLE_BASE_ID,
   ACCESS_TOKEN: process.env.AIRTABLE_ACCESS_TOKEN,
-  TABLE_NAME: process.env.AIRTABLE_TABLE_NAME, // This will be set for each deployment
+  STORE_TABLE_ID: process.env.AIRTABLE_STORE_TABLE_ID,
+  LOOT_TABLE_ID: process.env.AIRTABLE_LOOT_TABLE_ID,
+  CHARACTER_TABLE_ID: process.env.AIRTABLE_CHARACTER_TABLE_ID, // This will be set for each deployment
 };
 
 // API Key for authentication
@@ -59,15 +61,20 @@ app.get("/health", (req, res) => {
     success: true,
     message: "D&D Inventory Proxy Server is running",
     timestamp: new Date().toISOString(),
-    table: AIRTABLE_CONFIG.TABLE_NAME,
+    table: AIRTABLE_CONFIG.CHARACTER_TABLE_ID,
     secured: !!API_KEY, // Indicates if API key protection is enabled
   });
 });
 
-// GET all items data from single table
+function extractSingleValue(value) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+// GET all items data from CHARACTER table
 app.get("/api/data", async (req, res) => {
+  console.log(AIRTABLE_CONFIG.CHARACTER_TABLE_ID);
   try {
-    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.TABLE_NAME}`;
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}`;
 
     const response = await axios.get(url, {
       headers: {
@@ -80,19 +87,20 @@ app.get("/api/data", async (req, res) => {
       success: true,
       items: response.data.records.map((record) => ({
         id: record.id,
-        name: record.fields.Name || "",
+        customId: extractSingleValue(record.fields.CustomId) || "",
+        name: extractSingleValue(record.fields.Name) || "",
         quantity: record.fields.Quantity || 0,
-        description: record.fields.Description || "",
-        price: record.fields.Price || "",
-        weight: record.fields.Weight || "",
-        type: record.fields.Type || "",
+        description: extractSingleValue(record.fields.Description) || "",
+        price: extractSingleValue(record.fields.Price) || "",
+        weight: extractSingleValue(record.fields.Weight) || "",
+        type: extractSingleValue(record.fields.Type) || "",
         createdTime: record.createdTime,
       })),
       count: response.data.records.length,
     };
 
     console.log(
-      `✅ GET request successful - ${transformedData.count} items from ${AIRTABLE_CONFIG.TABLE_NAME}`
+      `✅ GET request successful - ${transformedData.count} items from ${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}`
     );
     res.json(transformedData);
   } catch (error) {
@@ -112,11 +120,111 @@ app.get("/api/data", async (req, res) => {
   }
 });
 
-// GET single item
+// GET all items data from STORE table
+app.get("/api/data/store", async (req, res) => {
+  console.log(AIRTABLE_CONFIG.STORE_TABLE_ID);
+  try {
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.STORE_TABLE_ID}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_CONFIG.ACCESS_TOKEN}`,
+      },
+    });
+
+    // Transform Airtable format to app format
+    const transformedData = {
+      success: true,
+      items: response.data.records.map((record) => ({
+        id: record.id,
+        customId: extractSingleValue(record.fields.CustomId) || "",
+        name: extractSingleValue(record.fields.Name) || "",
+        quantity: record.fields.Quantity || 0,
+        description: extractSingleValue(record.fields.Description) || "",
+        price: extractSingleValue(record.fields.Price) || "",
+        weight: extractSingleValue(record.fields.Weight) || "",
+        type: extractSingleValue(record.fields.Type) || "",
+        createdTime: record.createdTime,
+      })),
+      count: response.data.records.length,
+    };
+
+    console.log(
+      `✅ GET request successful - ${transformedData.count} items from ${AIRTABLE_CONFIG.STORE_TABLE_ID}`
+    );
+    res.json(transformedData);
+  } catch (error) {
+    console.error(`❌ GET error:`, error.message);
+
+    if (error.response?.status === 404) {
+      return res.status(404).json({
+        success: false,
+        error: "Table not found",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error.response?.data?.error?.message || error.message,
+    });
+  }
+});
+
+// GET all items data from LOOT table
+app.get("/api/data/loot", async (req, res) => {
+  console.log(AIRTABLE_CONFIG.LOOT_TABLE_ID);
+  try {
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.LOOT_TABLE_ID}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_CONFIG.ACCESS_TOKEN}`,
+      },
+    });
+
+    // Transform Airtable format to app format
+    const transformedData = {
+      success: true,
+      items: response.data.records.map((record) => ({
+        id: record.id,
+        customId: extractSingleValue(record.fields.CustomId) || "",
+        name: extractSingleValue(record.fields.Name) || "",
+        quantity: record.fields.Quantity || 0,
+        description: extractSingleValue(record.fields.Description) || "",
+        price: extractSingleValue(record.fields.Price) || "",
+        weight: extractSingleValue(record.fields.Weight) || "",
+        type: extractSingleValue(record.fields.Type) || "",
+        createdTime: record.createdTime,
+      })),
+      count: response.data.records.length,
+    };
+
+    console.log(
+      `✅ GET request successful - ${transformedData.count} items from ${AIRTABLE_CONFIG.LOOT_TABLE_ID}`
+    );
+    res.json(transformedData);
+  } catch (error) {
+    console.error(`❌ GET error:`, error.message);
+
+    if (error.response?.status === 404) {
+      return res.status(404).json({
+        success: false,
+        error: "Table not found",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error.response?.data?.error?.message || error.message,
+    });
+  }
+});
+
+// GET single item from CHARACTER table
 app.get("/api/data/:recordId", async (req, res) => {
   try {
     const { recordId } = req.params;
-    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.TABLE_NAME}/${recordId}`;
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}/${recordId}`;
 
     const response = await axios.get(url, {
       headers: {
@@ -125,11 +233,27 @@ app.get("/api/data/:recordId", async (req, res) => {
     });
 
     console.log(
-      `✅ GET request successful - Record: ${recordId} from ${AIRTABLE_CONFIG.TABLE_NAME}`
+      `✅ GET request successful - Record: ${recordId} from ${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}`
     );
+
+    const { id, createdTime, fields } = response.data;
+
+    // Transform response back to app format
+    const transformedRecord = {
+      id,
+      customId: extractSingleValue(fields.CustomId) || "",
+      name: extractSingleValue(fields.Name) || "",
+      quantity: fields.Quantity || 0,
+      description: extractSingleValue(fields.Description) || "",
+      price: extractSingleValue(fields.Price) || "",
+      weight: extractSingleValue(fields.Weight) || "",
+      type: extractSingleValue(fields.Type) || "",
+      createdTime,
+    };
+
     res.json({
       success: true,
-      data: response.data,
+      data: transformedRecord,
     });
   } catch (error) {
     console.error(`❌ GET error:`, error.message);
@@ -148,10 +272,54 @@ app.get("/api/data/:recordId", async (req, res) => {
   }
 });
 
-// POST new item
+// GET single item from CHARACTER table by customId
+app.get("/api/data/customId/:customId", async (req, res) => {
+  try {
+    const { customId } = req.params;
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}?filterByFormula=CustomId%3D%22${customId}%22`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_CONFIG.ACCESS_TOKEN}`,
+      },
+    });
+
+    console.log(
+      `✅ GET request successful - CustomId: ${customId} from ${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}`
+    );
+
+    const { id, createdTime, fields } = response.data.records[0];
+
+    // Transform response back to app format
+    const transformedRecord = {
+      id,
+      customId: extractSingleValue(fields.CustomId) || "",
+      name: extractSingleValue(fields.Name) || "",
+      quantity: fields.Quantity || 0,
+      description: extractSingleValue(fields.Description) || "",
+      price: extractSingleValue(fields.Price) || "",
+      weight: extractSingleValue(fields.Weight) || "",
+      type: extractSingleValue(fields.Type) || "",
+      createdTime,
+    };
+
+    res.json({
+      success: true,
+      data: transformedRecord,
+    });
+  } catch (error) {
+    console.error(`❌ GET error:`, error.message);
+    res.status(500).json({
+      success: false,
+      error: error.response?.data?.error?.message || error.message,
+    });
+  }
+});
+
+// POST new item to CHARACTER table
 app.post("/api/data", async (req, res) => {
   try {
-    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.TABLE_NAME}`;
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}`;
 
     // Transform app format to Airtable format
     const airtableData = {
@@ -172,20 +340,23 @@ app.post("/api/data", async (req, res) => {
       },
     });
 
+    const { id, createdTime, fields } = response.data;
+
     // Transform response back to app format
     const transformedRecord = {
-      id: response.data.id,
-      name: response.data.fields.Name || "",
-      quantity: response.data.fields.Quantity || 0,
-      description: response.data.fields.Description || "",
-      price: response.data.fields.Price || "",
-      weight: response.data.fields.Weight || "",
-      type: response.data.fields.Type || "",
-      createdTime: response.data.createdTime,
+      id,
+      customId: extractSingleValue(fields.CustomId) || "",
+      name: extractSingleValue(fields.Name) || "",
+      quantity: fields.Quantity || 0,
+      description: extractSingleValue(fields.Description) || "",
+      price: extractSingleValue(fields.Price) || "",
+      weight: extractSingleValue(fields.Weight) || "",
+      type: extractSingleValue(fields.Type) || "",
+      createdTime,
     };
 
     console.log(
-      `✅ POST request successful - Added: ${transformedRecord.itemName} to ${AIRTABLE_CONFIG.TABLE_NAME}`
+      `✅ POST request successful - Added: ${transformedRecord.itemName} to ${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}`
     );
     res.json({
       success: true,
@@ -200,24 +371,24 @@ app.post("/api/data", async (req, res) => {
   }
 });
 
-// PATCH update item
+// PATCH update item in CHARACTER table
 app.patch("/api/data/:recordId", async (req, res) => {
   try {
     const { recordId } = req.params;
-    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.TABLE_NAME}/${recordId}`;
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}/${recordId}`;
 
     // Transform app format to Airtable format (only include fields that are provided)
-    const fields = {};
-    if (req.body.name !== undefined) fields.Name = req.body.name;
+    const airtableFields = {};
+    if (req.body.name !== undefined) airtableFields.Name = req.body.name;
     if (req.body.quantity !== undefined)
-      fields.Quantity = parseInt(req.body.quantity) || 0;
+      airtableFields.Quantity = parseInt(req.body.quantity) || 0;
     if (req.body.description !== undefined)
-      fields.Description = req.body.description;
-    if (req.body.price !== undefined) fields.Price = req.body.price;
-    if (req.body.weight !== undefined) fields.Weight = req.body.weight;
-    if (req.body.type !== undefined) fields.Type = req.body.type;
+      airtableFields.Description = req.body.description;
+    if (req.body.price !== undefined) airtableFields.Price = req.body.price;
+    if (req.body.weight !== undefined) airtableFields.Weight = req.body.weight;
+    if (req.body.type !== undefined) airtableFields.Type = req.body.type;
 
-    const airtableData = { fields };
+    const airtableData = { airtableFields };
 
     const response = await axios.patch(url, airtableData, {
       headers: {
@@ -226,20 +397,23 @@ app.patch("/api/data/:recordId", async (req, res) => {
       },
     });
 
+    const { id, createdTime, fields } = response.data;
+
     // Transform response back to app format
     const transformedRecord = {
-      id: response.data.id,
-      name: response.data.fields.Name || "",
-      quantity: response.data.fields.Quantity || 0,
-      description: response.data.fields.Description || "",
-      price: response.data.fields.Price || "",
-      weight: response.data.fields.Weight || "",
-      type: response.data.fields.Type || "",
-      createdTime: response.data.createdTime,
+      id,
+      customId: extractSingleValue(fields.CustomId) || "",
+      name: extractSingleValue(fields.Name) || "",
+      quantity: fields.Quantity || 0,
+      description: extractSingleValue(fields.Description) || "",
+      price: extractSingleValue(fields.Price) || "",
+      weight: extractSingleValue(fields.Weight) || "",
+      type: extractSingleValue(fields.Type) || "",
+      createdTime,
     };
 
     console.log(
-      `✅ PATCH request successful - Updated: ${transformedRecord.name} (ID: ${recordId}) in ${AIRTABLE_CONFIG.TABLE_NAME}`
+      `✅ PATCH request successful - Updated: ${transformedRecord.name} (ID: ${recordId}) in ${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}`
     );
     res.json({
       success: true,
@@ -262,11 +436,11 @@ app.patch("/api/data/:recordId", async (req, res) => {
   }
 });
 
-// DELETE item
+// DELETE item from CHARACTER table
 app.delete("/api/data/:recordId", async (req, res) => {
   try {
     const { recordId } = req.params;
-    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.TABLE_NAME}/${recordId}`;
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}/${recordId}`;
 
     const response = await axios.delete(url, {
       headers: {
@@ -275,7 +449,7 @@ app.delete("/api/data/:recordId", async (req, res) => {
     });
 
     console.log(
-      `✅ DELETE request successful - Deleted record: ${recordId} from ${AIRTABLE_CONFIG.TABLE_NAME}`
+      `✅ DELETE request successful - Deleted record: ${recordId} from ${AIRTABLE_CONFIG.CHARACTER_TABLE_ID}`
     );
     res.json({
       success: true,
@@ -319,7 +493,6 @@ app.listen(PORT, () => {
   console.log(`🚀 D&D Inventory Proxy Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
   console.log(`🔗 API endpoints: http://localhost:${PORT}/api/data`);
-  console.log(`📋 Current table: ${AIRTABLE_CONFIG.TABLE_NAME}`);
 });
 
 module.exports = app;

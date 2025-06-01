@@ -9,7 +9,8 @@ export default function Test() {
   const loadData = async () => {
     // try {
     //   const response = await axios.get(
-    //     `${process.env.REACT_APP_BASE_URL}/api/data`,
+    //     // `${process.env.REACT_APP_BASE_URL}/api/data`,
+    //     "http://localhost:8001/api/data",
     //     {
     //       headers: {
     //         "X-API-Key": process.env.REACT_APP_API_KEY,
