@@ -1,17 +1,21 @@
 import { useTheme } from "@mui/material/styles";
-import { Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 export default function Header() {
   const theme = useTheme();
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         backgroundColor: theme.palette.primary[300],
         boxShadow: theme.palette.shadow.soft,
+        px: 12,
+        py: 2,
+        position: "relative",
+        zIndex: 2,
       }}
     >
       <Typography variant='titleBold'>Logo</Typography>
-    </div>
+    </Box>
   );
 }
