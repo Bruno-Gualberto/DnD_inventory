@@ -15,7 +15,7 @@ const AIRTABLE_CONFIG = {
   GLOBAL_TABLE_ID: process.env.AIRTABLE_GLOBAL_TABLE_ID,
   STORE_TABLE_ID: process.env.AIRTABLE_STORE_TABLE_ID,
   LOOT_TABLE_ID: process.env.AIRTABLE_LOOT_TABLE_ID,
-  COIN_POUCH_TABLE_ID: process.env.AIRTABLE_COIN_POUCH_TABLE_ID,
+  ALL_CHARACTERS_TABLE_ID: process.env.AIRTABLE_ALL_CHARACTERS_TABLE_ID,
   CHARACTER_TABLE_ID: process.env.AIRTABLE_CHARACTER_TABLE_ID, // This will be set for each deployment
 };
 
@@ -580,7 +580,7 @@ app.use("*", (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 D&D Inventory Proxy Server running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/health`);
-  console.log(`🔗 API endpoints: http://localhost:${PORT}/api/data`);
+  console.log(`🔗 API endpoints: http://localhost:${PORT}/api`);
 });
 
 module.exports = app;
