@@ -1,5 +1,6 @@
 import { useTheme } from "@mui/material/styles";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import "../styles/Header.css";
 
 export default function Header() {
   const theme = useTheme();
@@ -10,12 +11,14 @@ export default function Header() {
         backgroundColor: theme.palette.primary[300],
         boxShadow: theme.palette.shadow.soft,
         px: 12,
-        py: 2,
+        py: 3,
         position: "relative",
         zIndex: 2,
+        display: "flex",
+        alignItems: "center",
       }}
     >
-      <Typography variant='titleBold'>Logo</Typography>
+      <img className='logo' src='/assets/Logo-Secondary.svg' alt='logo' />
     </Box>
   );
 }

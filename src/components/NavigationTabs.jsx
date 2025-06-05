@@ -1,28 +1,11 @@
-import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router";
+import { useState } from "react";
+import { Link } from "react-router";
 import { useTheme } from "@mui/material/styles";
 import { Box, Tab, Tabs } from "@mui/material";
 
 export default function NavigationTabs() {
   const theme = useTheme();
-  const location = useLocation();
   const [value, setValue] = useState("inventory");
-
-  useEffect(() => {
-    switch (location.pathname) {
-      case "/":
-        setValue("inventory");
-        break;
-      case "/store":
-        setValue("store");
-        break;
-      case "/loot":
-        setValue("loot");
-        break;
-      default:
-        setValue("inventory");
-    }
-  }, [location.pathname]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -76,17 +59,13 @@ export default function NavigationTabs() {
         />
         <Tab
           value='loot'
-          label='Loot'
+          label='Baú'
           component={Link}
           to='/loot'
           disableRipple
           sx={{ py: 3, width: 120 }}
         />
       </Tabs>
-
-      {/* <Link to='/'>Inventário</Link>
-      <Link to='/store'>Loja</Link>
-      <Link to='/loot'>Loot</Link> */}
     </Box>
   );
 }
