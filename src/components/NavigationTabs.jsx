@@ -1,45 +1,62 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { useTheme } from "@mui/material/styles";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router";
+import { styled } from "@mui/material/styles";
 import { Box, Tab, Tabs } from "@mui/material";
 
+const StyledMuiBox = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.primary[200],
+  boxShadow: theme.palette.shadow.big,
+  padding: `${theme.spacing(0)} ${theme.spacing(10)}`,
+  position: "relative",
+  zIndex: 1,
+}));
+
+const StyledMuiTabs = styled(Tabs)(({ theme }) => ({
+  color: theme.palette.primary[800],
+  "& .MuiTabs-indicator": {
+    backgroundColor: theme.palette.primary[800],
+    width: "54px !important",
+    height: theme.spacing(0.5),
+    borderRadius: "10px 10px 0 0",
+    transform: "translateX(calc((120px - 54px) / 2))",
+    transition: "all 0.3s cubic-bezier(0, -0.55, 0.265, 2)",
+  },
+  "& .Mui-selected": {
+    color: theme.palette.primary[800],
+    fontWeight: 700,
+  },
+}));
+
 export default function NavigationTabs() {
-  const theme = useTheme();
+  const location = useLocation();
   const [value, setValue] = useState("inventory");
+
+  useEffect(() => {
+    switch (location.pathname) {
+      case "/":
+        setValue("inventory");
+        break;
+      case "/store":
+        setValue("store");
+        break;
+      case "/loot":
+        setValue("loot");
+        break;
+      default:
+        setValue("inventory");
+    }
+  }, [location.pathname]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
   return (
-    <Box
-      sx={{
-        backgroundColor: theme.palette.primary[200],
-        boxShadow: theme.palette.shadow.big,
-        px: 10,
-        py: 0,
-        position: "relative",
-        zIndex: 1,
-      }}
-    >
-      <Tabs
+    <StyledMuiBox>
+      <StyledMuiTabs
         value={value}
         onChange={handleChange}
-        textColor={theme.palette.primary[800]}
         aria-label='navigation tabs'
-        sx={{
-          "& .MuiTabs-indicator": {
-            backgroundColor: theme.palette.primary[800],
-            width: "54px !important",
-            height: 4,
-            borderRadius: "10px 10px 0 0",
-            transform: "translateX(calc((120px - 54px) / 2))",
-            transition: "all 0.3s cubic-bezier(0, -0.55, 0.265, 2)",
-          },
-          "& .Mui-selected": {
-            fontWeight: 700,
-          },
-        }}
       >
         <Tab
           value='inventory'
@@ -65,7 +82,7 @@ export default function NavigationTabs() {
           disableRipple
           sx={{ py: 3, width: 120 }}
         />
-      </Tabs>
-    </Box>
+      </StyledMuiTabs>
+    </StyledMuiBox>
   );
 }
