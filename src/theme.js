@@ -165,6 +165,25 @@ const theme = createTheme({
         },
       },
     },
+    MuiTabs: {
+      styleOverrides: {
+        root: {
+          overflow: "visible",
+          "& .MuiTabs-scroller": {
+            overflow: "visible !important",
+          },
+        },
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+          fontSize: 16,
+          color: customColors.primary[800],
+        },
+      },
+    },
     MuiTypography: {
       defaultProps: {
         variantMapping: {
