@@ -84,13 +84,6 @@ const customColors = {
   background: {
     default: "#EBDCD2",
   },
-  // Custom colors that you can use throughout your app
-  custom: {
-    gold: "#ffd700",
-    silver: "#c0c0c0",
-    bronze: "#cd7f32",
-    surface: "#ffffff",
-  },
   shadow: {
     soft: "2px 4px 4px 0px rgba(0, 0, 0, 0.1)",
     big: "2px 4px 30px 0px rgba(0, 0, 0, 0.1)",

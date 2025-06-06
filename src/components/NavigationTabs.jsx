@@ -21,7 +21,7 @@ const StyledMuiTabs = styled(Tabs)(({ theme }) => ({
     transform: "translateX(calc((120px - 54px) / 2))",
     transition: "all 0.3s cubic-bezier(0, -0.55, 0.265, 2)",
   },
-  "& .Mui-selected": {
+  "& .Mui-selected.MuiTab-root": {
     color: theme.palette.primary[800],
     fontWeight: 700,
   },
