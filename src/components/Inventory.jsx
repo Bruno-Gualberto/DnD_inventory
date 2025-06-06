@@ -1,42 +1,40 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+
+import { getInventory, getCharacterInfo } from "../utils/inventoryMethods";
 
 import { Button, Typography } from "@mui/material";
 import FeedbackMessage from "./FeedbackMessage";
 
 export default function Inventory() {
   const [inventory, setInventory] = useState([]);
+  const [characterInfo, setCharacterInfo] = useState({});
   const [feedbackSettings, setFeedbackSettings] = useState({
     message: "",
     isOpen: false,
     isError: false,
   });
 
-  const getInventory = async () => {
-    try {
-      const response = await axios.get(
-        // `${process.env.REACT_APP_BASE_URL}/api/character`,
-        "http://localhost:8001/api/characte",
-        {
-          headers: {
-            "X-API-Key": process.env.REACT_APP_API_KEY,
-          },
-        }
-      );
-      setInventory(response.data);
-      console.log(response.data);
-    } catch (error) {
-      setFeedbackSettings({
-        message: error.message,
-        isOpen: true,
-        isError: true,
-      });
-      console.error("Error fetching data:", error);
-    }
-  };
-
   useEffect(() => {
-    getInventory();
+    const fetchData = async () => {
+      const inventory = await getInventory();
+      const characterInfo = await getCharacterInfo();
+
+      inventory.success
+        ? setInventory(inventory.items)
+        : setFeedbackSettings({
+            message: inventory.message,
+            isOpen: true,
+            isError: true,
+          });
+      characterInfo.success
+        ? setCharacterInfo(characterInfo.data)
+        : setFeedbackSettings({
+            message: characterInfo.message,
+            isOpen: true,
+            isError: true,
+          });
+    };
+    fetchData();
   }, []);
 
   return (

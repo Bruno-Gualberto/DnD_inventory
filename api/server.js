@@ -386,6 +386,111 @@ app.get("/api/character/customId/:customId", async (req, res) => {
   }
 });
 
+// GET all characters from ALL_CHARACTERS table
+app.get("/api/all-characters", async (req, res) => {
+  try {
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.ALL_CHARACTERS_TABLE_ID}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_CONFIG.ACCESS_TOKEN}`,
+      },
+    });
+
+    console.log(
+      `✅ GET request successful - All characters from ${AIRTABLE_CONFIG.ALL_CHARACTERS_TABLE_ID}`
+    );
+
+    // Transform response back to app format
+    const transformedRecord = {
+      success: true,
+      items: response.data.records.map((record) => ({
+        id: record.id,
+        name: record.fields.Name || "",
+        level: record.fields.Level || "",
+        race: record.fields.Race || "",
+        class: record.fields.Class || "",
+        experience: record.fields.Experience || "",
+        strModifier: record.fields.StrModifier || "",
+        coins: record.fields.Coins || "",
+        createdTime: record.createdTime,
+      })),
+      count: response.data.records.length,
+    };
+
+    res.json({
+      success: true,
+      data: transformedRecord,
+    });
+  } catch (error) {
+    console.error(`❌ GET error:`, error.message);
+
+    if (error.response?.status === 404) {
+      return res.status(404).json({
+        success: false,
+        error: "Record not found",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error.response?.data?.error?.message || error.message,
+    });
+  }
+});
+
+// GET one character from ALL_CHARACTERS table
+app.get("/api/all-characters/:recordId", async (req, res) => {
+  try {
+    const { recordId } = req.params;
+    const url = `https://api.airtable.com/v0/${AIRTABLE_CONFIG.BASE_ID}/${AIRTABLE_CONFIG.ALL_CHARACTERS_TABLE_ID}/${recordId}`;
+
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_CONFIG.ACCESS_TOKEN}`,
+      },
+    });
+
+    console.log(
+      `✅ GET request successful - Record: ${recordId} from ${AIRTABLE_CONFIG.ALL_CHARACTERS_TABLE_ID}`
+    );
+
+    const { id, createdTime, fields } = response.data;
+
+    // Transform response back to app format
+    const transformedRecord = {
+      id,
+      name: fields.Name || "",
+      level: fields.Level || "",
+      race: fields.Race || "",
+      class: fields.Class || "",
+      experience: fields.Experience || "",
+      strModifier: fields.StrModifier || "",
+      coins: fields.Coins || "",
+      createdTime,
+    };
+
+    res.json({
+      success: true,
+      data: transformedRecord,
+    });
+  } catch (error) {
+    console.error(`❌ GET error:`, error.message);
+
+    if (error.response?.status === 404) {
+      return res.status(404).json({
+        success: false,
+        error: "Record not found",
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      error: error.response?.data?.error?.message || error.message,
+    });
+  }
+});
+
 // POST new item to CHARACTER table
 app.post("/api/character/add", async (req, res) => {
   const { customId, quantity = 1 } = req.body;
