@@ -6,6 +6,10 @@
 /.pnp
 .pnp.js
 
+# Vite
+dist/
+*.local
+
 # testing
 /coverage
 
