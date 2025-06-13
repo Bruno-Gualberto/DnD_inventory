@@ -3,11 +3,11 @@ import axios from "axios";
 export const getInventory = async () => {
   try {
     const response = await axios.get(
-      // `${process.env.REACT_APP_BASE_URL}/api/character`,
-      "http://localhost:8001/api/characte",
+      // `${import.meta.env.VITE_BASE_URL}/api/character`,
+      "http://localhost:8001/api/character",
       {
         headers: {
-          "X-API-Key": process.env.REACT_APP_API_KEY,
+          "X-API-Key": import.meta.env.VITE_API_KEY,
         },
       }
     );
@@ -21,11 +21,11 @@ export const getInventory = async () => {
 export const getCharacterInfo = async () => {
   try {
     const response = await axios.get(
-      // `${process.env.REACT_APP_BASE_URL}/api/all-characters/${process.env.REACT_APP_LYA_ID}`,
-      `http://localhost:8001/api/all-characters/${process.env.REACT_APP_LYA_ID}`,
+      // `${import.meta.env.VITE_BASE_URL}/api/all-characters/${import.meta.env.VITE_LYA_ID}`,
+      `http://localhost:8001/api/all-characters/${import.meta.env.VITE_LYA_ID}`,
       {
         headers: {
-          "X-API-Key": process.env.REACT_APP_API_KEY,
+          "X-API-Key": import.meta.env.VITE_API_KEY,
         },
       }
     );
