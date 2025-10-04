@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 
 import { getInventory, getCharacterInfo } from "../utils/inventoryMethods";
 
-import { Button, Typography } from "@mui/material";
+import { Button, Typography, Box } from "@mui/material";
 import FeedbackMessage from "./FeedbackMessage";
+import CharacterInfo from "./CharacterInfo";
 
 export default function Inventory() {
   const [inventory, setInventory] = useState([]);
@@ -38,11 +39,11 @@ export default function Inventory() {
   }, []);
 
   return (
-    <div>
-      <Typography variant='titleBold'>PÁGINA DO INVENTÁRIO</Typography>
-      <Button variant='contained' color='tertiary'>
+    <Box sx={{ padding: "0 120px" }}>
+      <CharacterInfo characterInfo={characterInfo} />
+      {/* <Button variant='contained' color='tertiary'>
         <Typography variant='ctaBold'>Adicionar Item</Typography>
-      </Button>
+      </Button> */}
       {feedbackSettings.isOpen && (
         <FeedbackMessage
           message={feedbackSettings.message}
@@ -50,6 +51,6 @@ export default function Inventory() {
           isError={feedbackSettings.isError}
         />
       )}
-    </div>
+    </Box>
   );
 }

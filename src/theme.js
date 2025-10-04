@@ -177,6 +177,20 @@ const theme = createTheme({
         },
       },
     },
+    MuiBox: {
+      variants: [
+        {
+          props: { variant: "chip" },
+          style: {
+            borderRadius: "8px",
+            padding: "8px 16px",
+            fontSize: "16px",
+            lineHeight: "16px",
+            fontWeight: 700,
+          },
+        },
+      ],
+    },
     MuiTypography: {
       defaultProps: {
         variantMapping: {
@@ -190,8 +204,22 @@ const theme = createTheme({
           bodyRegular: "p",
           smallBold: "p",
           smallRegular: "p",
+          chip: "p",
         },
       },
+      variants: [
+        {
+          props: { variant: "chip" },
+          style: {
+            borderRadius: "8px",
+            padding: "5.5px 16px",
+            fontSize: "16px",
+            lineHeight: "16px",
+            fontWeight: 700,
+            display: "inline-block",
+          },
+        },
+      ],
     },
   },
 });

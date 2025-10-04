@@ -1,7 +1,9 @@
+import { Box } from "@mui/material";
+
 export default function Store() {
   return (
-    <div>
+    <Box sx={{ padding: "0 120px" }}>
       <p>PÁGINA DA LOJA</p>
-    </div>
+    </Box>
   );
 }

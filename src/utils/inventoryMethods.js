@@ -4,7 +4,7 @@ export const getInventory = async () => {
   try {
     const response = await axios.get(
       // `${import.meta.env.VITE_BASE_URL}/api/character`,
-      "http://localhost:8001/api/character",
+      "http://localhost:8001/api/character-inventory",
       {
         headers: {
           "X-API-Key": import.meta.env.VITE_API_KEY,

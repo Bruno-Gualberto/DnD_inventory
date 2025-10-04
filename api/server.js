@@ -15,7 +15,7 @@ const supabase = createClient(
 );
 
 const API_KEY = process.env.API_KEY;
-const CHARACTER_NAME = process.env.CHARACTER_NAME;
+const CHARACTER_INVENTORY_TABLE = process.env.CHARACTER_INVENTORY_TABLE;
 
 const itemQuery = `
     id,
@@ -66,7 +66,7 @@ const authenticateApiKey = (req, res, next) => {
   next();
 };
 
-app.use("/api", authenticateApiKey);
+// app.use("/api", authenticateApiKey);
 
 app.get("/health", (req, res) => {
   res.json({
@@ -115,16 +115,16 @@ app.get("/api/global", async (req, res) => {
 });
 
 // GET all items from character inventory's table with joined Items data
-app.get("/api/character", async (req, res) => {
+app.get("/api/character-inventory", async (req, res) => {
   try {
     const { data, error, count } = await supabase
-      .from(CHARACTER_NAME)
+      .from(CHARACTER_INVENTORY_TABLE)
       .select(itemQuery, { count: "exact" });
 
     if (error) throw error;
 
     console.log(
-      `✅ GET request successful - ${count} items from ${CHARACTER_NAME}'s table`
+      `✅ GET request successful - ${count} items from ${CHARACTER_INVENTORY_TABLE}'s table`
     );
 
     res.json({
@@ -228,12 +228,12 @@ app.get("/api/loot", async (req, res) => {
 });
 
 // GET single item from character inventory's table by id
-app.get("/api/character/:itemId", async (req, res) => {
+app.get("/api/character-inventory/:itemId", async (req, res) => {
   try {
     const { itemId } = req.params;
 
     const { data, error } = await supabase
-      .from(CHARACTER_NAME)
+      .from(CHARACTER_INVENTORY_TABLE)
       .select(itemQuery)
       .eq("id", itemId)
       .single();
@@ -249,7 +249,7 @@ app.get("/api/character/:itemId", async (req, res) => {
     }
 
     console.log(
-      `✅ GET request successful - Item: ${itemId} from ${CHARACTER_NAME}`
+      `✅ GET request successful - Item: ${itemId} from ${CHARACTER_INVENTORY_TABLE}`
     );
 
     res.json({
@@ -365,7 +365,7 @@ app.get("/api/all-characters/:characterUUID", async (req, res) => {
 });
 
 // POST new item to character inventory's table
-app.post("/api/character/add", async (req, res) => {
+app.post("/api/character-inventory/add", async (req, res) => {
   const { uuid, quantity = 1 } = req.body;
 
   try {
@@ -385,7 +385,7 @@ app.post("/api/character/add", async (req, res) => {
 
     // Insert into character inventory's table
     const { data, error } = await supabase
-      .from(CHARACTER_NAME)
+      .from(CHARACTER_INVENTORY_TABLE)
       .insert([
         {
           UUID: uuid,
@@ -398,7 +398,7 @@ app.post("/api/character/add", async (req, res) => {
     if (error) throw error;
 
     console.log(
-      `✅ POST request successful - Added: ${itemData.Name} to ${CHARACTER_NAME}`
+      `✅ POST request successful - Added: ${itemData.Name} to ${CHARACTER_INVENTORY_TABLE}`
     );
 
     res.json({
@@ -427,7 +427,7 @@ app.post("/api/character/add", async (req, res) => {
 });
 
 // PATCH update item in character inventory's table
-app.patch("/api/character/:itemId", async (req, res) => {
+app.patch("/api/character-inventory/:itemId", async (req, res) => {
   try {
     const { itemId } = req.params;
 
@@ -445,7 +445,7 @@ app.patch("/api/character/:itemId", async (req, res) => {
     }
 
     const { data, error } = await supabase
-      .from(CHARACTER_NAME)
+      .from(CHARACTER_INVENTORY_TABLE)
       .update(updates)
       .eq("id", itemId)
       .select(itemQuery)
@@ -462,7 +462,7 @@ app.patch("/api/character/:itemId", async (req, res) => {
     }
 
     console.log(
-      `✅ PATCH request successful - Updated: ${data.Items?.Name} (ID: ${itemId}) in ${CHARACTER_NAME}`
+      `✅ PATCH request successful - Updated: ${data.Items?.Name} (ID: ${itemId}) in ${CHARACTER_INVENTORY_TABLE}`
     );
 
     res.json({
@@ -491,12 +491,12 @@ app.patch("/api/character/:itemId", async (req, res) => {
 });
 
 // DELETE item from character inventory's table
-app.delete("/api/character/:itemId", async (req, res) => {
+app.delete("/api/character-inventory/:itemId", async (req, res) => {
   try {
     const { itemId } = req.params;
 
     const { data, error } = await supabase
-      .from(CHARACTER_NAME)
+      .from(CHARACTER_INVENTORY_TABLE)
       .delete()
       .eq("id", itemId)
       .select()
@@ -513,7 +513,7 @@ app.delete("/api/character/:itemId", async (req, res) => {
     }
 
     console.log(
-      `✅ DELETE request successful - Deleted item: ${itemId} from ${CHARACTER_NAME}`
+      `✅ DELETE request successful - Deleted item: ${itemId} from ${CHARACTER_INVENTORY_TABLE}`
     );
 
     res.json({

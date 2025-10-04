@@ -4,7 +4,7 @@ import { Box } from "@mui/material";
 const StyledMuiBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.primary[300],
   boxShadow: theme.palette.shadow.soft,
-  padding: `${theme.spacing(3)} ${theme.spacing(12)}`,
+  padding: `${theme.spacing(3)} ${theme.spacing(15)}`,
   position: "relative",
   zIndex: 2,
   display: "flex",

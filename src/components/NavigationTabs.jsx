@@ -6,9 +6,10 @@ import { Box, Tab, Tabs } from "@mui/material";
 const StyledMuiBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.primary[200],
   boxShadow: theme.palette.shadow.big,
-  padding: `${theme.spacing(0)} ${theme.spacing(10)}`,
+  padding: `${theme.spacing(0)} ${theme.spacing(13)}`,
   position: "relative",
   zIndex: 1,
+  marginBottom: "42px",
 }));
 
 const StyledMuiTabs = styled(Tabs)(({ theme }) => ({
